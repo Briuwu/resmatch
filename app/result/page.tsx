@@ -6,7 +6,7 @@ import { JobsScraped } from "./jobs-scraped";
 export default function ResultPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4">
-      <div className="grid grid-cols-[0.75fr_1fr] gap-10">
+      <div className="grid grid-cols-[0.65fr_1fr] gap-10">
         <div className="space-y-8">
           {/* Header Section */}
           <div className="space-y-6 text-center">

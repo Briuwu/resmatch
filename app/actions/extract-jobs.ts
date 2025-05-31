@@ -77,7 +77,6 @@ export async function extractJobsAI(
       },
     ],
   });
-  console.log("object", object);
 
   return object;
 }

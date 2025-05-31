@@ -67,8 +67,6 @@ export const StartBtn = () => {
           }),
         );
 
-        console.log(scrapedJobResults);
-
         const jobsResults = await Promise.all(
           scrapedJobResults.map(async (scrapedJob) => {
             return await generateJobAI(scrapedJob as string);
@@ -83,8 +81,6 @@ export const StartBtn = () => {
           ),
           isLoading: false,
         });
-
-        console.log(jobsResults);
       } catch (error) {
         toast.error(error instanceof Error && error.message);
         console.error("Error extracting the keywords", error);

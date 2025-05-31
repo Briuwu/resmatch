@@ -20,7 +20,7 @@ Guidelines:
 - Use industry-standard titles (e.g., “Junior Backend Developer”, “AI Research Intern”) and avoid generic terms like “Tech Person” or “Software”.
 - If name or location are not clearly stated, return an empty string ("") for those fields, but never skip the field.
 - Always return a minimum of 3 and a maximum of 10 relevant job search keywords.
-- If the applicant is a student, recent graduate, or intern, prioritize entry-level and internship titles.
+- If the applicant is a student, recent graduate, or intern, prioritize entry-level and internship titles. ALWAYS ADD 'entry-level' or 'junior' if the applicant is a student, recent graduate, or intern.
 - Limit it to 3 keywords
 
 Return ONLY the object in the following schema:
