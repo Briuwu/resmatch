@@ -68,12 +68,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} grid min-h-screen content-center bg-gradient-to-br from-slate-50 from-40% to-red-200 px-2 antialiased md:from-60%`}
+        className={`${geistMono.variable} ${geistSans.variable} min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 antialiased`}
       >
         <ResumeStoreProvider>{children}</ResumeStoreProvider>
-        <Toaster richColors />
+        <Toaster
+          richColors
+          theme="dark"
+          toastOptions={{
+            style: {
+              background: "rgb(30 41 59)",
+              border: "1px solid rgb(51 65 85)",
+              color: "rgb(226 232 240)",
+            },
+          }}
+        />
       </body>
     </html>
   );
