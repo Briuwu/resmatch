@@ -58,11 +58,13 @@ export async function extractJobsAI(
     schema: z.object({
       jobs: z.array(
         z.object({
-          keywordTitle: z.string(),
-          url: z.string(),
+          keywordTitle: z.string().describe("The job keyword or title"),
+          url: z.string().describe("Direct URL to the job listing on Indeed"),
         }),
       ),
-      totalResults: z.number(),
+      totalResults: z
+        .number()
+        .describe("Total number of search URLs generated"),
     }),
     messages: [
       {

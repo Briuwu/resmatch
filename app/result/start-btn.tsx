@@ -9,12 +9,21 @@ import { Sparkles, Loader2 } from "lucide-react";
 import { keywordExtractorAI } from "../actions/extract-keywords";
 import { extractJobsAI } from "../actions/extract-jobs";
 import { ResumeState } from "@/stores/resume-store";
+import { scrapeSite } from "../actions/firecrawl-site";
+import { generateJobAI } from "../actions/generate-job";
 
 export const StartBtn = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const { resume, setExtractedResume, extractedResume, setResult, result } =
-    useResumeStore((state) => state);
+  const {
+    resume,
+    setExtractedResume,
+    extractedResume,
+    setResult,
+    result,
+    setScrapedJobs,
+    scrapedJobs,
+  } = useResumeStore((state) => state);
 
   const handleAI = () => {
     if (resume.fileContent === "") {
@@ -46,6 +55,36 @@ export const StartBtn = () => {
           ...jobs,
           isLoading: false,
         });
+
+        setScrapedJobs({
+          ...scrapedJobs,
+          isLoading: true,
+        });
+
+        const scrapedJobResults = await Promise.all(
+          jobs.jobs.map(async (job) => {
+            return await scrapeSite(job.url);
+          }),
+        );
+
+        console.log(scrapedJobResults);
+
+        const jobsResults = await Promise.all(
+          scrapedJobResults.map(async (scrapedJob) => {
+            return await generateJobAI(scrapedJob as string);
+          }),
+        );
+
+        setScrapedJobs({
+          jobs: jobsResults.flatMap((j) => j.jobs),
+          totalResults: jobsResults.reduce(
+            (acc, job) => acc + job.totalResults,
+            0,
+          ),
+          isLoading: false,
+        });
+
+        console.log(jobsResults);
       } catch (error) {
         toast.error(error instanceof Error && error.message);
         console.error("Error extracting the keywords", error);

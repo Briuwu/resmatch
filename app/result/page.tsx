@@ -1,6 +1,7 @@
 import { ExtractedInformation } from "@/app/result/extracted-information";
 import { StartBtn } from "@/app/result/start-btn";
 import { ExtractedJobsURL } from "./extracted-jobs-url";
+import { JobsScraped } from "./jobs-scraped";
 
 export default function ResultPage() {
   return (
@@ -38,7 +39,7 @@ export default function ResultPage() {
           <ExtractedInformation />
           <ExtractedJobsURL />
         </div>
-        <div>test</div>
+        <JobsScraped />
       </div>
     </main>
   );
