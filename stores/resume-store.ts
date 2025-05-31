@@ -11,6 +11,14 @@ export type ResumeState = {
   };
   result: {
     jobs: {
+      keywordTitle: string;
+      url: string;
+    }[];
+    totalResults: number;
+    isLoading: boolean;
+  };
+  scrapedJobs: {
+    jobs: {
       title: string;
       company: string;
       location: string;
@@ -26,6 +34,7 @@ export type ResumeActions = {
   setResume: (resume: ResumeState["resume"]) => void;
   setExtractedResume: (extractedResume: ResumeState["extractedResume"]) => void;
   setResult: (result: ResumeState["result"]) => void;
+  setScrapedJobs: (scrapedJobs: ResumeState["scrapedJobs"]) => void;
 };
 
 export type ResumeStore = ResumeState & ResumeActions;
@@ -46,6 +55,11 @@ export const defaultInitState: ResumeState = {
     totalResults: 0,
     isLoading: false,
   },
+  scrapedJobs: {
+    jobs: [],
+    totalResults: 0,
+    isLoading: false,
+  },
 };
 
 export const createResumeStore = (
@@ -56,5 +70,6 @@ export const createResumeStore = (
     setResume: (resume) => set({ resume }),
     setExtractedResume: (extractedResume) => set({ extractedResume }),
     setResult: (result) => set({ result }),
+    setScrapedJobs: (scrapedJobs) => set({ scrapedJobs }),
   }));
 };

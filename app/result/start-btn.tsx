@@ -7,13 +7,14 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Sparkles, Loader2 } from "lucide-react";
 import { keywordExtractorAI } from "../actions/extract-keywords";
+import { extractJobsAI } from "../actions/extract-jobs";
+import { ResumeState } from "@/stores/resume-store";
 
 export const StartBtn = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const { resume, setExtractedResume, extractedResume } = useResumeStore(
-    (state) => state,
-  );
+  const { resume, setExtractedResume, extractedResume, setResult, result } =
+    useResumeStore((state) => state);
 
   const handleAI = () => {
     if (resume.fileContent === "") {
@@ -27,9 +28,22 @@ export const StartBtn = () => {
           ...extractedResume,
           isLoading: true,
         });
-        const object = await keywordExtractorAI(resume);
+
+        const extracted = (await keywordExtractorAI(
+          resume,
+        )) as ResumeState["extractedResume"];
         setExtractedResume({
-          ...object,
+          ...extracted,
+          isLoading: false,
+        });
+
+        setResult({
+          ...result,
+          isLoading: true,
+        });
+        const jobs = (await extractJobsAI(extracted)) as ResumeState["result"];
+        setResult({
+          ...jobs,
           isLoading: false,
         });
       } catch (error) {

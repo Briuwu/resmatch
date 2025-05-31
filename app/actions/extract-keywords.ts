@@ -20,6 +20,7 @@ Guidelines:
 - Use industry-standard titles (e.g., “Junior Backend Developer”, “AI Research Intern”) and avoid generic terms like “Tech Person” or “Software”.
 - If name or location are not clearly stated, return an empty string ("") for those fields, but never skip the field.
 - Always return a minimum of 3 and a maximum of 10 relevant job search keywords.
+- If the applicant is a student, recent graduate, or intern, prioritize entry-level and internship titles.
 
 Return ONLY the object in the following schema:
 
@@ -31,8 +32,6 @@ Return ONLY the object in the following schema:
 `;
 
 export async function keywordExtractorAI(resume: ResumeState["resume"]) {
-  console.log(resume);
-
   const { object } = await generateObject({
     model: mistral("mistral-small-latest"),
     schema: z.object({
@@ -55,8 +54,6 @@ export async function keywordExtractorAI(resume: ResumeState["resume"]) {
       },
     ],
   });
-
-  console.log(object);
 
   return object;
 }
