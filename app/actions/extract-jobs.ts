@@ -52,7 +52,6 @@ Your task is to return a JSON object that includes:
 export async function extractJobsAI(
   extractedResume: ResumeState["extractedResume"],
 ) {
-  console.log("extractedResume", extractedResume);
   const { object } = await generateObject({
     model: mistral("mistral-small-latest"),
     schema: z.object({
