@@ -7,7 +7,7 @@ export async function scrapeSite(url: string) {
   const scrapeResult = await app.scrapeUrl(url, {
     formats: ["markdown"],
     onlyMainContent: true,
-    includeTags: [".resultContent", ".sc-692f12d5-3"],
+    includeTags: [".resultContent"],
   });
 
   if (scrapeResult.error) {

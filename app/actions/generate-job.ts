@@ -4,60 +4,35 @@ import { mistral } from "@ai-sdk/mistral";
 import { z } from "zod";
 
 const SYSTEM_PROMPT = `
-You are an AI parser that extracts relevant job listings from markdown-formatted text scraped from job search websites like Indeed and Prosple.
+You are an AI parser that extracts job listings from a markdown-formatted string scraped from a job search results page (e.g., from Indeed).
+
+Your task is to extract structured job listing data and return it in the exact schema provided below.
 
 ---
 
-### Input:
-You will receive:
-- A markdown-formatted string with one or more job postings
-- A keyword representing the job the user is looking for (e.g., "Junior Developer", "Senior Frontend Engineer", "AI Intern")
+### What You Will Receive:
+You will receive a markdown string that includes one or more job postings. Each job includes:
+- A job title formatted as a markdown link (e.g., ## [Title](URL))
+- A company name
+- A location (city or "Work from Home")
+- A short block of plain text (optional), which should be used as the job description
 
 ---
 
-### Goal:
-Extract only the job listings that clearly **match the role and level described by the keyword**.
-
-The job title must **strongly relate to both the role and seniority level** in the keyword.
-
----
-
-### Matching Rules:
-
-✅ INCLUDE a job if:
-- Its title matches or closely aligns with the **intent** of the keyword
-- It reflects the same **seniority level** (e.g., intern, junior, mid-level, senior, lead)
-- It is clearly targeted at the role in the keyword (e.g., “Backend Developer”, “Data Scientist”, etc.)
-
-❌ EXCLUDE a job if:
-- It is for a different **seniority level** (e.g., keyword is "Junior Developer" but title is "Senior Developer")
-- The keyword is only mentioned in the description, not in the title
-- The job mentions mentoring or managing the role in the keyword (e.g., “Lead Engineer mentoring Junior Developers”)
-
-> Focus on **title-based intent** — a job title must directly align with the keyword.
-
----
-
-### Markdown Format of Job Postings:
-Each job includes:
-- A title as a markdown heading with a link: \`## [Title](URL)\`
-- Company name (line below the title)
-- Location (line below the company)
-- An optional description (in the next lines)
-
----
-
-### Extract for Each Valid Job:
-- \`title\`: From the markdown link
-- \`company\`: From the line below the title
-- \`location\`: From the line below the company
-- \`description\`: Use 1–3 sentence summary, or “No description provided.”
-- \`url\`: From the markdown link
+### What You Must Do:
+1. For each job posting:
+   - Extract the **job title** from the markdown heading
+   - Extract the **URL** from the markdown link
+   - Extract the **company name**
+   - Extract the **location**
+   - If there is no job description, use a generic phrase like “No description provided.”
+2. Parse all jobs and return them in the schema below.
+3. Count the total number of jobs parsed and return it as \`totalResults\`.
 
 ---
 
 ### Output Format:
-Return ONLY a valid JSON object in this format:
+Return ONLY a valid JSON object that matches this structure:
 
 {
   "jobs": [
@@ -65,23 +40,17 @@ Return ONLY a valid JSON object in this format:
       "title": "The job title",
       "company": "The company name",
       "location": "The job location",
-      "description": "A 1–3 sentence summary or placeholder",
-      "url": "Direct job posting URL"
+      "description": "A 1-3 sentence description or a placeholder if missing",
+      "url": "The job listing URL"
     }
   ],
-  "totalResults": total number of matching jobs (as a number)
+  "totalResults": total number of jobs (as a number),
 }
 
----
-
-### Final Instructions:
-- Match jobs **only when both role and seniority align**
-- Return a clean JSON object only — no extra text or explanation
-- Always return \`totalResults\` with the number of jobs included
+Do not include any extra text or commentary. Return only a JSON object that strictly matches this schema.
 `;
 
 export async function generateJobAI(scrapedJobs: string, keyword: string) {
-  console.log("scrapedJobs", scrapedJobs);
   const { object } = await generateObject({
     model: mistral("mistral-small-latest"),
     schema: z.object({
@@ -110,8 +79,6 @@ export async function generateJobAI(scrapedJobs: string, keyword: string) {
       },
     ],
   });
-
-  console.log("object", object);
 
   return object;
 }
