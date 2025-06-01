@@ -25,9 +25,31 @@ You will receive a markdown string that includes one or more job postings. Each 
    - Extract the **URL** from the markdown link
    - Extract the **company name**
    - Extract the **location**
-   - If there is no job description, use a generic phrase like “No description provided.”
+   - If there is no job description, use a generic phrase like "No description provided."
 2. Parse all jobs and return them in the schema below.
 3. Count the total number of jobs parsed and return it as \`totalResults\`.
+
+---
+
+IMPORTANT: Only include jobs where the job level (e.g., "junior", "mid", "senior", "lead", "entry", "principal", etc.) in the job title matches the keyword provided.
+- Do NOT include jobs where the level is only mentioned in the job description or responsibilities, but not in the job title.
+- For example, if the keyword is "junior developer", only include jobs with "junior" in the job title (e.g., "Junior Developer", "Junior Software Engineer").
+- Do NOT include jobs with titles like "Mid-level Developer" or "Senior Developer" even if their description mentions "responsible for junior developers".
+- Only exact level matches in the job title should be parsed.
+- Common job levels to consider: "junior", "entry", "mid", "senior", "lead", "principal", "intern", etc.
+- Ignore jobs with ambiguous or missing levels unless the keyword does not specify a level.
+
+---
+
+### Level Matching Examples:
+- If the keyword is "junior developer":
+  - INCLUDE: "## [Junior Developer](...)" (title contains "junior")
+  - EXCLUDE: "## [Mid-level Developer](...)" (title does not contain "junior")
+  - EXCLUDE: "## [Developer](...)" with description "responsible for junior developers" (title does not contain "junior")
+- If the keyword is "senior engineer":
+  - INCLUDE: "## [Senior Engineer](...)" (title contains "senior")
+  - EXCLUDE: "## [Lead Engineer](...)" (title does not contain "senior")
+  - EXCLUDE: "## [Engineer](...)" with description "looking for a senior candidate" (title does not contain "senior")
 
 ---
 
