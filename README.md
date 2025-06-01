@@ -25,7 +25,7 @@ Resmatch is a web app designed for developers, engineers, and tech professionals
 
 ## 📸 Preview
 
-> _(Insert screenshot or demo GIF here if available)_
+![Resmatch Preview](./public/preview.png)
 
 ---
 
