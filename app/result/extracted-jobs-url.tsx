@@ -36,7 +36,7 @@ export const ExtractedJobsURL = () => {
             <div className="grid gap-4">
               {result.jobs.map((job, index) => (
                 <div
-                  key={job.keywordTitle}
+                  key={`${job.keywordTitle}-${index}`}
                   className="group relative overflow-hidden rounded-xl border border-slate-700/30 bg-slate-800/50 transition-all duration-300 hover:border-slate-600/50 hover:bg-slate-800/70"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />

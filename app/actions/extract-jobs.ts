@@ -5,66 +5,85 @@ import { ResumeState } from "@/stores/resume-store";
 import { z } from "zod";
 
 const SYSTEM_PROMPT = `
-You are an AI assistant that generates optimized job search URLs for Indeed.com based on a list of job titles or keywords and the user's country.
+You are an AI assistant that generates optimized job search URLs for both **Indeed.com** and **Prosple.com** based on a list of job titles or keywords and the user's country.
 
-Your task is to return a JSON object that includes:
-- A list of search keywords (job titles) the user is interested in
-- For each keyword, generate a properly formatted Indeed job search URL
-- Use the correct **Indeed domain** based on the user's country
+---
+
+### Your task is to:
+1. Receive a list of job search keywords (e.g., "Junior Python Developer", "AI Intern")
+2. Receive the user's country (e.g., Philippines, United States)
+3. Generate one a search URL alternating between both platforms.
+4. Use the correct country-specific domain for both platforms.
+5. REMEMBER TO ONLY ADD 1 PLATFORM FOR KEYWORD, NOT BOTH.
 
 ---
 
 ### Rules:
 
-1. Do NOT include specific city or location parameters in the URL.
-2. Use the appropriate **Indeed regional domain**:
-   - United States → https://www.indeed.com
-   - Philippines → https://ph.indeed.com
-   - United Kingdom → https://uk.indeed.com
-   - Canada → https://ca.indeed.com
-   - India → https://in.indeed.com
-   - Australia → https://au.indeed.com
-   - Germany → https://de.indeed.com
-   - If the country is not listed above, default to https://www.indeed.com
-3. Format spaces in search queries using "+" (e.g., "Junior Python Developer" → "Junior+Python+Developer")
-4. Add \`fromage=3\` to each URL to limit results to jobs posted in the past 3 days.
+#### Indeed Domain Mapping:
+- United States → https://www.indeed.com
+- Philippines → https://ph.indeed.com
+- United Kingdom → https://uk.indeed.com
+- Canada → https://ca.indeed.com
+- India → https://in.indeed.com
+- Australia → https://au.indeed.com
+- Germany → https://de.indeed.com
+- Default to → https://www.indeed.com
+
+- Format search query: Replace spaces with +
+- Add fromage=3 to filter jobs posted in the past 3 days
+
+**Example:**  
+Keyword: "Backend Developer" → https://ph.indeed.com/jobs?q=Backend+Developer&fromage=3
+
+---
+
+#### Prosple Domain Mapping:
+- Philippines → https://ph.prosple.com
+- Australia → https://au.prosple.com
+- Singapore → https://sg.prosple.com
+- India → https://in.prosple.com
+- Default to → https://ph.prosple.com
+
+- Format search query: Replace spaces with \`%20\`
+- Use this Prosple format:  
+  \`https://[domain]/search-jobs?keywords=[encoded keyword]&locations=5&defaults_applied=1\`
+
+**Example:**  
+Keyword: "Backend Developer" → https://ph.prosple.com/search-jobs?keywords=Backend%20Developer&locations=5&defaults_applied=1
 
 ---
 
 ### Output Schema:
+Return a valid JSON object matching this structure:
 
 {
   "jobs": [
     {
       "keywordTitle": "The job keyword or title",
-      "url": "Direct URL to the job listing on Indeed"
-    },
-    ...
+      "url": "The url of the job"
+    }
   ],
-  "totalResults": Total number of search URLs generated (as a number)
-  
+  "totalResults": Total number of keyword-based job search URLs generated (each keyword counts as 2)
 }
 
-- Do not include additional commentary or explanations.
-- Always include the total number of keyword-based URLs.
+- Do not include extra commentary or formatting
+- ALWAYS LIMIT IT TO 1 PLATFORM FOR KEYWORD, NOT BOTH.
 `;
 
 export async function extractJobsAI(
   extractedResume: ResumeState["extractedResume"],
 ) {
-  console.log("extractedResume", extractedResume);
   const { object } = await generateObject({
     model: mistral("mistral-small-latest"),
     schema: z.object({
       jobs: z.array(
         z.object({
           keywordTitle: z.string().describe("The job keyword or title"),
-          url: z.string().describe("Direct URL to the job listing on Indeed"),
+          url: z.string().describe("The url of the job"),
         }),
       ),
-      totalResults: z
-        .number()
-        .describe("Total number of search URLs generated"),
+      totalResults: z.number(),
     }),
     messages: [
       {
@@ -73,7 +92,7 @@ export async function extractJobsAI(
       },
       {
         role: "user",
-        content: `Job Keywords: ${extractedResume.keywords.join(", ")}, Location: ${extractedResume.location}`,
+        content: `Job Keywords: ${extractedResume.keywords.join(", ")}, Country: ${extractedResume.location}`,
       },
     ],
   });

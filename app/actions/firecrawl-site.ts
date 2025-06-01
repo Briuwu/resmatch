@@ -1,6 +1,5 @@
 "use server";
 
-// Install with npm install @mendable/firecrawl-js
 import FireCrawlApp from "@mendable/firecrawl-js";
 
 export async function scrapeSite(url: string) {
@@ -8,7 +7,7 @@ export async function scrapeSite(url: string) {
   const scrapeResult = await app.scrapeUrl(url, {
     formats: ["markdown"],
     onlyMainContent: true,
-    includeTags: [".resultContent"],
+    includeTags: [".resultContent", ".sc-692f12d5-3"],
   });
 
   if (scrapeResult.error) {

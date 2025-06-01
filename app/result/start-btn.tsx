@@ -63,13 +63,21 @@ export const StartBtn = () => {
 
         const scrapedJobResults = await Promise.all(
           jobs.jobs.map(async (job) => {
-            return await scrapeSite(job.url);
+            const data = await scrapeSite(job.url);
+
+            return {
+              content: data,
+              keyword: job.keywordTitle,
+            };
           }),
         );
 
         const jobsResults = await Promise.all(
           scrapedJobResults.map(async (scrapedJob) => {
-            return await generateJobAI(scrapedJob as string);
+            return await generateJobAI(
+              scrapedJob.content as string,
+              scrapedJob.keyword,
+            );
           }),
         );
 

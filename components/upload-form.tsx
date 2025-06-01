@@ -90,7 +90,7 @@ export function UploadForm() {
   );
 
   return (
-    <div className="space-y-6">
+    <div>
       {isPending && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm">
           <div className="relative">

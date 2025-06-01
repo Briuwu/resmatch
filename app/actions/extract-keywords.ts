@@ -21,7 +21,7 @@ Guidelines:
 - If name or location are not clearly stated, return an empty string ("") for those fields, but never skip the field.
 - Always return a minimum of 3 and a maximum of 10 relevant job search keywords.
 - If the applicant is a student, recent graduate, or intern, prioritize entry-level and internship titles. ALWAYS ADD 'entry-level' or 'junior' if the applicant is a student, recent graduate, or intern.
-- Limit it to 3 keywords
+- Limit it to 4 keywords
 
 Return ONLY the object in the following schema:
 
@@ -32,7 +32,7 @@ Return ONLY the object in the following schema:
 }
 
 NOTE:
-- Limit it ONLY to 3 KEYWORDS MAXIMUM
+- Limit it ONLY to 4 KEYWORDS MAXIMUM
 `;
 
 export async function keywordExtractorAI(resume: ResumeState["resume"]) {
